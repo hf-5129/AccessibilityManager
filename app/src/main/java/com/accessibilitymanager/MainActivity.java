@@ -357,13 +357,31 @@ public class MainActivity extends AppCompatActivity {
             } catch (PackageManager.NameNotFoundException e) {
                 holder.serviceIconIv.setImageResource(android.R.drawable.sym_def_app_icon);
             }
+
+            // 原始的服务描述（用于 dialog），保留读取逻辑
             CharSequence description = info.loadDescription(pm);
             CharSequence fullDescription = TextUtils.isEmpty(description)
                     ? getString(R.string.service_description_fallback)
                     : description;
 
+            // 将列表项中的描述替换为 "由（应用名称）提供"，使用你新增的字符串资源 provided_by
+            String providerAppName;
+            try {
+                if (cn != null) {
+                    providerAppName = pm.getApplicationLabel(pm.getApplicationInfo(cn.getPackageName(), 0)).toString();
+                } else if (!TextUtils.isEmpty(title)) {
+                    providerAppName = title;
+                } else {
+                    providerAppName = getString(R.string.app_name);
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                providerAppName = title;
+            }
+            String providerText = getString(R.string.provided_by, providerAppName);
+
             holder.serviceNameTv.setText(title);
-            holder.serviceDescTv.setText(fullDescription);
+            holder.serviceDescTv.setText(providerText);
+            holder.serviceDescTv.setContentDescription(providerText); // 无障碍友好
 
             boolean isEnabled = AccessibilityUtils.isServiceEnabled(MainActivity.this, id);
             boolean isDaemon = DaemonListStore.containsId(daemonListStr, id);
