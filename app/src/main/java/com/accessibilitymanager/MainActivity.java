@@ -39,7 +39,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -430,7 +430,7 @@ public class MainActivity extends AppCompatActivity {
         TextView serviceNameTv;
         TextView serviceDescTv;
         ImageView serviceIconIv;
-        SwitchMaterial serviceSwitch;
+        MaterialSwitch serviceSwitch;
         ImageButton lockButton;
     }
 }
