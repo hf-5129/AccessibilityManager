@@ -27,6 +27,8 @@
     <string name="permission_dialog_shizuku_success">Shizuku授权成功</string>
     <string name="permission_dialog_shizuku_failed">Shizuku授权失败</string>
 
+    <string name="provided_by">由%s提供</string>
+
     <string name="daemon_notification_channel_name">保活服务</string>
     <string name="daemon_notification_title">海绵宝宝，猜猜我有几颗糖~</string>
     <string name="daemon_notification_text">猜对了两颗都给你！</string>
