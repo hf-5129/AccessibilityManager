@@ -85,7 +85,7 @@
                     android:src="@drawable/lock"
                     android:visibility="invisible" />
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
+                <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/service_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
