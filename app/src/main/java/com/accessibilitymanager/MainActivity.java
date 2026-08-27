@@ -394,7 +394,7 @@ public class MainActivity extends AppCompatActivity {
             holder.serviceSwitch.setChecked(isEnabled);
 
             holder.lockButton.setVisibility(isEnabled ? View.VISIBLE : View.INVISIBLE);
-            holder.lockButton.setImageResource(isDaemon ? R.drawable.lock1 : R.drawable.lock);
+            holder.lockButton.setImageResource(isDaemon ? R.drawable.ic_lock : R.drawable.ic_lock_open);
             holder.lockButton.setContentDescription(
                     getString(isDaemon ? R.string.lock_button_desc_locked : R.string.lock_button_desc_unlocked)
             );
