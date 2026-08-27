@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.graphics.Color;
@@ -52,6 +53,7 @@ import rikka.shizuku.Shizuku;
  * <p>
  * 负责展示系统中的无障碍服务列表，提供开关控制与保活锁定功能。
  * 实现了权限的按需申请与保活服务的静默开启。
+ * 仅显示用户安装的应用（不排除预装应用）中的无障碍服务。
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         sp = getSharedPreferences(AppConstants.PREFS_NAME, Context.MODE_PRIVATE);
         daemonListStr = sp.getString(AppConstants.KEY_DAEMON_LIST, "");
 
-        // 初始化“隐藏后台”状态
+        // 初始化"隐藏后台"状态
         boolean hideRecents = sp.getBoolean(AppConstants.KEY_HIDE_RECENTS, false);
         if (hideRecents) {
             applyHideFromRecents(true);
@@ -127,7 +129,35 @@ public class MainActivity extends AppCompatActivity {
         AccessibilityManager am = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
 
         if (am != null) {
-            serviceList = new ArrayList<>(am.getInstalledAccessibilityServiceList());
+            List<AccessibilityServiceInfo> allServices = new ArrayList<>(am.getInstalledAccessibilityServiceList());
+            
+            // 过滤：只保留用户安装的应用中的无障碍服务（不排除��装应用）
+            serviceList = new ArrayList<>();
+            PackageManager pm = getPackageManager();
+            
+            for (AccessibilityServiceInfo service : allServices) {
+                String packageName = null;
+                ComponentName cn = ComponentName.unflattenFromString(service.getId());
+                if (cn != null) {
+                    packageName = cn.getPackageName();
+                }
+                
+                if (packageName != null) {
+                    try {
+                        ApplicationInfo appInfo = pm.getApplicationInfo(packageName, 0);
+                        // 检查应用是否是系统应用（不是用户安装的）
+                        boolean isSystemApp = (appInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0 &&
+                                             (appInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 0;
+                        
+                        // 只排除纯系统应用，预装应用（FLAG_UPDATED_SYSTEM_APP）会被保留
+                        if (!isSystemApp) {
+                            serviceList.add(service);
+                        }
+                    } catch (PackageManager.NameNotFoundException e) {
+                        Log.w(TAG, "应用未找到: " + packageName);
+                    }
+                }
+            }
         } else {
             serviceList = new ArrayList<>();
         }
