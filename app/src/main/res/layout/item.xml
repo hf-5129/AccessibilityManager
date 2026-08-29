@@ -61,7 +61,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:maxLines="2"
+                    android:maxLines="1"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -77,11 +77,11 @@
                 <ImageButton
                     android:id="@+id/lock_button"
                     android:contentDescription="@string/lock_button_desc_unlocked"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="10dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
+                    android:padding="0dp"
                     android:src="@drawable/lock"
                     android:visibility="invisible" />
 
