@@ -1,4 +1,0 @@
-<!-- res/values/attrs.xml -->
-<resources>
-    <attr name="buttonDefaultBgColor" format="color" />
-</resources>
