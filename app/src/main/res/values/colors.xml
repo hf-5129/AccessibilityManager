@@ -5,5 +5,5 @@
 
     <color name="screen_background">?attr/colorSurface</color>
     <color name="item_card_background">?attr/colorSurfaceContainerLow</color>
-    <color name="item_card_ripple">?android:attr/colorControlHighlight</color>
+    <color name="item_card_ripple">?attr/colorControlHighlight</color>
 </resources>
