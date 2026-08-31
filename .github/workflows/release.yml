@@ -33,23 +33,11 @@ jobs:
           echo "version=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION_NAME" >> $GITHUB_OUTPUT
 
-      - name: Check if Tag exists
-        id: check_tag
-        run: |
-          if git rev-parse "${{ steps.get_version.outputs.tag }}" >/dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "Tag ${{ steps.get_version.outputs.tag }} already exists. Skipping release steps."
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Decode Keystore
-        if: steps.check_tag.outputs.exists == 'false'
         run: |
           echo "${{ secrets.SIGNING_KEY }}" | base64 --decode > ${{ github.workspace }}/release.jks
 
       - name: Build and Sign Release APK
-        if: steps.check_tag.outputs.exists == 'false'
         run: ./gradlew assembleRelease
         env:
           SIGNING_STORE_FILE: ${{ github.workspace }}/release.jks
@@ -57,8 +45,14 @@ jobs:
           SIGNING_KEY_ALIAS: ${{ secrets.ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
+      - name: Delete existing release & tag (force overwrite)
+        run: |
+          TAG="${{ steps.get_version.outputs.tag }}"
+          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || echo "No existing release for $TAG, creating fresh."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create Release
-        if: steps.check_tag.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
           files: app/build/outputs/apk/release/*.apk
