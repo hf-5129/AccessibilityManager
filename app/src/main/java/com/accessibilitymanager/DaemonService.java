@@ -117,7 +117,7 @@ public class DaemonService extends Service {
         PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.ic_stat_daemon)
+                .setSmallIcon(R.drawable.ic_accessibility)
                 .setContentTitle(getString(R.string.daemon_notification_title))
                 .setContentText(getString(R.string.daemon_notification_text))
                 .setContentIntent(pi);
