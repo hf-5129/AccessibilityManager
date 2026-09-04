@@ -31,4 +31,9 @@ public class AppConstants {
      * 是否隐藏后台 Key
      */
     public static final String KEY_HIDE_RECENTS = "hide_recents";
+
+    /**
+     * 是否显示系统应用 Key
+     */
+    public static final String KEY_SHOW_SYSTEM_APPS = "show_system_apps";
 }

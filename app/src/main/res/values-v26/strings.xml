@@ -6,6 +6,7 @@
     <string name="menu_auto_start_guard">开机后自动启动守护</string>
     <string name="menu_show_guard_toast">显示保活提示</string>
     <string name="menu_hide_from_recents">从最近任务中隐藏</string>
+    <string name="menu_show_system_apps">显示系统应用</string>
 
     <string name="service_description_fallback">该服务未提供说明</string>
     <string name="lock_button_desc_locked">已加入保活名单</string>

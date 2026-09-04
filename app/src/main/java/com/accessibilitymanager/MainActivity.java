@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.graphics.Color;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_POST_NOTIFICATIONS = 1001; // 权限请求码
 
     private List<AccessibilityServiceInfo> serviceList;
+    private List<AccessibilityServiceInfo> allServices;
     private SharedPreferences sp;
     private String daemonListStr;
     private ServiceAdapter adapter;
@@ -137,15 +139,58 @@ public class MainActivity extends AppCompatActivity {
         AccessibilityManager am = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
 
         if (am != null) {
-            serviceList = new ArrayList<>(am.getInstalledAccessibilityServiceList());
+            allServices = new ArrayList<>(am.getInstalledAccessibilityServiceList());
         } else {
-            serviceList = new ArrayList<>();
+            allServices = new ArrayList<>();
         }
 
-        sortServices();
+        refreshServiceList();
 
         adapter = new ServiceAdapter();
         listView.setAdapter(adapter);
+    }
+
+    /**
+     * 重新加载列表：先按“显示系统应用”开关过滤，再按保活名单置顶排序。
+     * 规则：非系统应用始终显示；系统应用仅在勾选开关时显示，
+     * 但已开启无障碍权限且已锁定（保活名单）的系统应用始终保留。
+     */
+    private void refreshServiceList() {
+        boolean showSystem = sp.getBoolean(AppConstants.KEY_SHOW_SYSTEM_APPS, false);
+        List<AccessibilityServiceInfo> filtered = new ArrayList<>();
+        for (AccessibilityServiceInfo info : allServices) {
+            if (shouldShowService(info, showSystem)) {
+                filtered.add(info);
+            }
+        }
+        serviceList = filtered;
+        sortServices();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private boolean shouldShowService(AccessibilityServiceInfo info, boolean showSystem) {
+        if (showSystem) {
+            return true;
+        }
+        ComponentName cn = ComponentName.unflattenFromString(info.getId());
+        if (cn == null) {
+            return true;
+        }
+        try {
+            ApplicationInfo ai = getPackageManager().getApplicationInfo(cn.getPackageName(), 0);
+            boolean isSystem = (ai.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
+            if (!isSystem) {
+                return true;
+            }
+            // 已开启无障碍权限且已锁定的系统应用，取消勾选后也不消失
+            String id = info.getId();
+            return AccessibilityUtils.isServiceEnabled(MainActivity.this, id)
+                    && DaemonListStore.containsId(daemonListStr, id);
+        } catch (PackageManager.NameNotFoundException e) {
+            return true;
+        }
     }
 
     private void sortServices() {
@@ -161,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChange(boolean selfChange) {
                 if (adapter != null) {
-                    adapter.notifyDataSetChanged();
+                    refreshServiceList();
                 }
             }
         };
@@ -276,6 +321,7 @@ public class MainActivity extends AppCompatActivity {
         menu.findItem(R.id.boot).setChecked(sp.getBoolean(AppConstants.KEY_AUTO_BOOT, true));
         menu.findItem(R.id.toast).setChecked(sp.getBoolean(AppConstants.KEY_SHOW_TOAST, true));
         menu.findItem(R.id.hide).setChecked(sp.getBoolean(AppConstants.KEY_HIDE_RECENTS, false));
+        menu.findItem(R.id.show_system).setChecked(sp.getBoolean(AppConstants.KEY_SHOW_SYSTEM_APPS, false));
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -298,6 +344,13 @@ public class MainActivity extends AppCompatActivity {
             sp.edit().putBoolean(AppConstants.KEY_HIDE_RECENTS, newState).apply();
             item.setChecked(newState);
             applyHideFromRecents(newState);
+            return true;
+        } else if (id == R.id.show_system) {
+            // 切换“显示系统应用”，立即刷新列表
+            boolean newState = !item.isChecked();
+            sp.edit().putBoolean(AppConstants.KEY_SHOW_SYSTEM_APPS, newState).apply();
+            item.setChecked(newState);
+            refreshServiceList();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -448,8 +501,7 @@ public class MainActivity extends AppCompatActivity {
                     ? DaemonListStore.addId(daemonListStr, id)
                     : DaemonListStore.removeId(daemonListStr, id);
             sp.edit().putString(AppConstants.KEY_DAEMON_LIST, daemonListStr).apply();
-            sortServices();
-            notifyDataSetChanged();
+            refreshServiceList();
         }
     }
 
