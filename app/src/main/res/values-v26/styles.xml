@@ -16,4 +16,27 @@
     <style name="RtlOverlay.Widget.AppCompat.PopupMenuItem" parent="android:Widget">
         <item name="android:paddingEnd">0dp</item>
     </style>
+
+    <!--
+        M3 MaterialAlertDialog 按钮 filled 样式（配合同名覆盖布局 m3_alert_dialog_actions.xml）。
+        父样式=库自带实底 filled 按钮（primary 色 + elevation）；
+        补充 dialog 按钮专属值：minWidth 64dp、singleLine、按钮间距 8dp
+        （neutral 用 Flush 无左间距，positive/negative 各带 8dp marginStart），
+        并把水平 padding 从实底链的 24dp 覆盖回文字按钮的 12dp（dialog 观感）。
+    -->
+    <style name="Widget.App.Button.FilledDialog" parent="Widget.Material3.Button">
+        <item name="android:minWidth">@dimen/m3_btn_dialog_btn_min_width</item>
+        <item name="android:lines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_marginStart">@dimen/m3_btn_dialog_btn_spacing</item>
+        <item name="android:layout_marginLeft">@dimen/m3_btn_dialog_btn_spacing</item>
+        <item name="android:paddingLeft">@dimen/m3_btn_text_btn_padding_left</item>
+        <item name="android:paddingRight">@dimen/m3_btn_text_btn_padding_right</item>
+    </style>
+
+    <style name="Widget.App.Button.FilledDialog.Flush" parent="Widget.App.Button.FilledDialog">
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginLeft">0dp</item>
+    </style>
 </resources>
