@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">无障碍管理器</string>
-    <string name="keep_alive_service_label">无障碍管理器-保活组件</string>
+    <string name="keep_alive_service_label">无障碍保活组件</string>
 
     <string name="menu_auto_start_guard">开机后自动启动守护</string>
     <string name="menu_show_guard_toast">显示保活提示</string>
@@ -33,5 +33,5 @@
     <string name="daemon_notification_channel_name">保活服务</string>
     <string name="daemon_notification_title">海绵宝宝，猜猜我有几颗糖~</string>
     <string name="daemon_notification_text">猜对了两颗都给你！</string>
-    <string name="daemon_restore_toast">已自动拉起: %1$s</string>
+    <string name="daemon_restore_toast">已自动拉起：%1$s</string>
 </resources>
