@@ -30,7 +30,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,6 +39,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
@@ -457,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
             holder.serviceSwitch.setChecked(isEnabled);
 
             holder.lockButton.setVisibility(isEnabled ? View.VISIBLE : View.INVISIBLE);
-            holder.lockButton.setImageResource(isDaemon ? R.drawable.ic_lock : R.drawable.ic_lock_open);
+            holder.lockButton.setIconResource(isDaemon ? R.drawable.ic_lock : R.drawable.ic_lock_open);
             holder.lockButton.setContentDescription(
                     getString(isDaemon ? R.string.lock_button_desc_locked : R.string.lock_button_desc_unlocked)
             );
@@ -511,6 +511,6 @@ public class MainActivity extends AppCompatActivity {
         TextView serviceDescTv;
         ImageView serviceIconIv;
         MaterialSwitch serviceSwitch;
-        ImageButton lockButton;
+        MaterialButton lockButton;
     }
 }
